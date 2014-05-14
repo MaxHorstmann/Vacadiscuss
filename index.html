@@ -11,22 +11,37 @@
     <tr>
         <td>Hawaii</td>
         <td><img src="http://sbhawaii.com/images/hawaiian_beach.jpg" width="300px"> </td>
-        <td><input id="voteHawaii" type="button" value="Vote"><br/>123 votes</td>
+        <td><input id="hawaii" type="button" value="Vote"><br/><p id="hawaiivotes"></p></td>
     </tr>
 
     <tr>
         <td>New York</td>
         <td><img src="http://cdn.frontpagemag.com/wp-content/uploads/2013/07/New-York-City-Skyline.jpg" width="300px"> </td>
-        <td><input id="voteNY" type="button" value="Vote"><br/>123 votes</td>
+        <td><input id="ny" type="button" value="Vote"><br/><p id="nyvotes"></p></td>
     </tr>
 
 </table>
 
+<h4>
+    Built and deployed in literally 10 minutes with <a href="http://www.firebase.com">Firebase</a>.
+</h4>
+
 <script type="text/javascript">
     var myDataRef = new Firebase('https://crackling-fire-7227.firebaseio.com/');
+
+    myDataRef.child('hawaii').on('value', function(snapshot) {
+        $('#hawaiivotes').html(snapshot.val() + ' votes');
+    });
+
+    myDataRef.child('ny').on('value', function(snapshot) {
+        $('#nyvotes').html(snapshot.val() + ' votes');
+    });
+
     $('input').on('click', function() {
         var vote = $(this).attr('id');
-        myDataRef.set(vote);
+        myDataRef.child(vote).transaction(function(current) {
+            return current+1;
+        });
     });
 </script>
 
